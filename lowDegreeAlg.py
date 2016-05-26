@@ -5,15 +5,17 @@ import inspect
 import numpy as np
 
 def lowDegree(examples, coefficients):
-    m = len(examples)
+    m = len(examples)                               # number of examples
     n = len(examples[0][0])                         # number of input bits n
     approx = 0
     for example in examples:
         temp = 0
         for coefficient in coefficients:
             temp += example[0][coefficient]
-        approx += example[1] * (-1)**temp
-    return 2**(-n) * approx
+        # approx += example[1] * (-1)**temp          #Todo: check calculation
+        approx += 2**(-n) * example[1] * (-1)**temp
+    # return 2 ** (-n) * approx
+    return approx
 
 def genExamples(boolean, probability, estimation, type=1):
     n = int(round(np.log10(1/probability) / estimation ** 2))               # O(log(1/probability)/estimation**2
@@ -47,7 +49,7 @@ if __name__ == '__main__':
     boolean_max = lambda x, y: x or y                                                               # max function
     boolean_majority = lambda a, b, c: (a and b) or (a and c) or (b and c) or (a and b and c)       # majority function
 
-    examples = genExamples(boolean_max, 0.1, 0.1)
+    examples = genExamples(boolean_max, 0.5, 0.2)
     print examples
     print lowDegree(examples, coefficients)
 
