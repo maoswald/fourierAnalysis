@@ -2,6 +2,7 @@
 
 import random
 import inspect
+import numpy as np
 
 def lowDegree(examples, coefficients):
     m = len(examples)
@@ -14,11 +15,11 @@ def lowDegree(examples, coefficients):
         approx += example[1] * (-1)**temp
     return 2**(-n) * approx
 
-def genExamples(boolean, type=1):
-    #Todo: Number of Examples
-    n = 5
-    examples = []                                       # 0 - 1
-    examplesMath = []                                   # 1 - -1
+def genExamples(boolean, probability, estimation, type=1):
+    n = int(round(np.log10(1/probability) / estimation ** 2))               # O(log(1/probability)/estimation**2
+    print "Number of Examples: " + str(n)
+    examples = []                                                           # 0 - 1
+    examplesMath = []                                                       # 1 - -1
     args = len(inspect.getargspec(boolean).args)
     randomArgs = []
     randomArgsMath = []
@@ -42,10 +43,12 @@ def booleanFunction(function, args):
 
 if __name__ == '__main__':
 
-    coefficients = [0,1]                # coefficients +1
-    boolean = lambda x,y: x or y        # max function
-    #print genExamples(boolean, 1)
-    
-    print lowDegree(genExamples(boolean), coefficients)
+    coefficients = [0,1]                                                                          # coefficients +1
+    boolean_max = lambda x, y: x or y                                                               # max function
+    boolean_majority = lambda a, b, c: (a and b) or (a and c) or (b and c) or (a and b and c)       # majority function
+
+    examples = genExamples(boolean_max, 0.1, 0.1)
+    print examples
+    print lowDegree(examples, coefficients)
 
 
