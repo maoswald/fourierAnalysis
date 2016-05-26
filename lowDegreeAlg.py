@@ -3,33 +3,49 @@
 import random
 import inspect
 
-def lowDegree(examples, fourierCoefficients):
-    return True
+def lowDegree(examples, coefficients):
+    m = len(examples)
+    n = len(examples[0][0])                         # number of input bits n
+    approx = 0
+    for example in examples:
+        temp = 0
+        for coefficient in coefficients:
+            temp += example[0][coefficient]
+        approx += example[1] * (-1)**temp
+    return 2**(-n) * approx
 
-
-def genExamples(boolean):
+def genExamples(boolean, type=1):
+    #Todo: Number of Examples
     n = 5
-    examples = []
+    examples = []                                       # 0 - 1
+    examplesMath = []                                   # 1 - -1
     args = len(inspect.getargspec(boolean).args)
     randomArgs = []
+    randomArgsMath = []
     for i in range(n):
         for h in range(args):
-            #randomArgs.append(-1 if random.randint(0, 1) == 1 else 1)
-            randomArgs.append(random.randint(0, 1))
-        examples.append((randomArgs, booleanFunction(boolean, randomArgs)))
+            rand = random.randint(0, 1)
+            randomArgsMath.append(-1 if rand == 1 else 1)
+            randomArgs.append(rand)
+        result = booleanFunction(boolean, randomArgs)
+        examplesMath.append((randomArgsMath, -1 if result == 1 else 1))
+        examples.append((randomArgs, result))
+        randomArgsMath = []
         randomArgs = []
-    return examples
+    if type == 0:
+        return examples
+    else:
+        return examplesMath
 
 def booleanFunction(function, args):
     return function(*args)
 
-
-
-#1. x, f(X) generien
-#2. annähern
-
 if __name__ == '__main__':
 
-    boolean = lambda x,y,c: x or y or c  #max
-    print genExamples(boolean)
+    coefficients = [0,1]                # coefficients +1
+    boolean = lambda x,y: x or y        # max function
+    #print genExamples(boolean, 1)
+    
+    print lowDegree(genExamples(boolean), coefficients)
+
 
